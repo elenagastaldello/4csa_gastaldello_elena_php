@@ -1,59 +1,51 @@
 <?php
-session_start();
+$error_message = "";
 
-// Verifica tentativi di accesso
-if (!isset($_SESSION['login_attempts'])) {
-    $_SESSION['login_attempts'] = 0;
-}
+if (isset($_GET['password'])) {
+    $input_password = $_GET['password'];
 
-// Verifica se il form è stato inviato
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Controlla la password
-    $password = isset($_POST['password']) ? $_POST['password'] : '';
-    if ($password == 'info2023') {
-        // Imposta la sessione come autenticata
-        $_SESSION['authenticated'] = true;
-        $_SESSION['user'] = 'Utente';  // Puoi impostare un nome utente di default
-        header('Location: dashboard.php');
+    if ($input_password === 'INFO2023') {
+        header('Location: paginarichieste.php');
         exit();
     } else {
-        // Incrementa i tentativi di accesso
-        $_SESSION['login_attempts']++;
-
-        // Se superato il limite, mostra un messaggio e termina l'esecuzione
-        if ($_SESSION['login_attempts'] >= 3) {
-            echo "Hai superato il limite di tentativi. Riprova più tardi.";
-            exit();
-        }
+        $error_message = "Password errata. Riprova.";
     }
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accesso al Questionario</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagina di Accesso</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
-<?php if (!isset($_SESSION['authenticated']) || !$_SESSION['authenticated']) : ?>
-    <h1>Accesso Richiesto</h1>
-    <form method="post">
+<div class="container mt-5">
+  <div class="col-md-6 offset-md-3">
+    <h2 class="text-center">Benvenuto! Inserisci la password:</h2>
+
+    <?php if ($error_message): ?>
+      <div class="alert alert-danger text-center" role="alert">
+        <?php echo $error_message; ?>
+      </div>
+    <?php endif; ?>
+
+    <form method="get">
+      <div class="form-group">
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        <input type="submit" value="Accedi">
+        <input type="password" class="form-control" id="password" name="password" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Invia</button>
     </form>
-<?php else: ?>
-    <p>Benvenuto, <?php echo $_SESSION['user']; ?>!</p>
-    <p><a href="paginarichieste.php">Vai alla COMPILAZIONE DEL QUESTIONARIO</a></p>
-<?php endif; ?>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
 </body>
 </html>
-
-
-
-
